@@ -14,37 +14,43 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-parts, ... }:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      flake-parts,
+      ...
+    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
       flake = {
         nixosConfigurations = {
-          # Desktop
+          # My Computer
           nixos = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
             modules = [
               ./hosts/nixos/default.nix
-	      inputs.home-manager.nixosModules.home-manager
-	      {
-	      	home-manager.useGlobalPkgs = true;
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.users.colbary = import ./modules/home/default.nix;
-	      }
+              }
             ];
             specialArgs = { inherit inputs; };
           };
-          # WSL
+          # Windows For WSL
           nixos-wsl = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
             modules = [
-	      ./hosts/nixos-wsl/default.nix
+              ./hosts/nixos-wsl/default.nix
               inputs.nixos-wsl.nixosModules.wsl
-	      inputs.home-manager.nixosModules.home-manager
-	      {
-		 home-manager.useGlobalPkgs = true;
-  		 home-manager.useUserPackages = true;
-  		 home-manager.users.colbary = import ./modules/home/default.nix;
-	      }
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.colbary = import ./modules/home/default.nix;
+              }
             ];
             specialArgs = { inherit inputs; };
           };
