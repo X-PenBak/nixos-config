@@ -1,4 +1,9 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
 
@@ -7,17 +12,34 @@
     ../../modules/system/default.nix
   ];
 
-  networking.hostName = "nixos";
-
-  # 原生机器需要 Bootloader
-  boot.loader.systemd-boot.enable = true;
-  
-
-  # 用户配置
-  users.users.colbary = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
-    shell = pkgs.fish;
+  # Bootloader
+  boot = {
+    kernelPackages = pkgs.linuxPackages_zen;
+    loader = {
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot/efi";
+      };
+      grub = {
+        enable = true;
+        efiSupport = true;
+        device = [ "nodev" ];
+        theme = pkgs.minimal-grub-theme;
+      };
+    };
   };
 
+  # hostname
+  networking.hostname = "nixos";
+  networking.networkmanager.enable = true;
+
+  # User Configuration
+  users.users.colbary = {
+    isNormalUser = true;
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
+    shell = pkgs.fish;
+  };
 }
