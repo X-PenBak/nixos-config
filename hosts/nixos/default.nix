@@ -10,6 +10,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/system/default.nix
+    ../../modules/system/desktop.nix
   ];
 
   # Bootloader
